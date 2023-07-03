@@ -1,7 +1,7 @@
 const Data = require('../models/datamodel');
 const mongoose = require('mongoose');
 
-// const getDept = async(req,res)=>{
+//  getDept 
     const getDept = async (req, res) => {
         try {
           const getdata = await Data.find({}).sort({ createdAt: -1 });
@@ -10,18 +10,37 @@ const mongoose = require('mongoose');
           res.status(500).json({ error: 'An error occurred while fetching tasks' });
         }
       };
-// }
 
+//getempplbyid
+const getaDept = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: 'Invalid task ID' });
+      }
+  
+      const data = await Data.findById(id);
+  
+      if (!data) {
+        return res.status(404).json({ error: 'Task not found' });
+      }
+  
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ error: 'An error occurred while fetching the task' });
+    }
+  };  
 
 
 
 
 //create 
 const createEmpl = async(req,res)=>{
-    const {Name, Surname, Department} = req.body
+    const {Name, Surname, Department, Specializations, CurrentProject, RevenuePerPatient} = req.body
 
     try{
-        const data = await Data.create({Name, Surname, Department});
+        const data = await Data.create({Name, Surname, Department, Specializations, CurrentProject, RevenuePerPatient});
         res.status(201).json(data);
 } catch (error){
     res.status(404).json(error)
@@ -69,6 +88,7 @@ const updateEmpl= async (req, res) => {
 
   module.exports = {
     getDept,
+    getaDept,
     createEmpl,
     deleteEmpl,
     updateEmpl
